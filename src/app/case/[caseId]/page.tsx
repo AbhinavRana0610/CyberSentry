@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { SharePanel } from "@/components/case/SharePanel";
 
 // Type definitions for our mock data
 type CaseStatus = 'received' | 'verifying' | 'notified' | 'action_taken' | 'closed';
@@ -50,6 +51,52 @@ interface CaseDetails {
 async function getCaseDetails(id: string): Promise<CaseDetails | null> {
     // Simulator delay
     await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Handle freshly submitted cases (Demo Logic)
+    if (id.startsWith("CS-IND-")) {
+        const today = new Date().toISOString().split('T')[0];
+        const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+        return {
+            id: id,
+            category: "Pending Classification",
+            platform: "Reported Platform",
+            identifier: "Pending Verification",
+            summary: "This report has just been submitted by a citizen and is currently queued for initial verification by the CyberSentry automated system.",
+            status: "received",
+            reportedDate: today,
+            views: 1,
+            timeline: [
+                {
+                    id: "1",
+                    date: today,
+                    time: time,
+                    title: "Citizen Report Received",
+                    description: "Report submitted via CyberSentry portal. Case ID generated and queued for verification.",
+                    status: "completed",
+                    icon: "check"
+                },
+                {
+                    id: "2",
+                    date: today,
+                    time: "Pending",
+                    title: "Automated Verification",
+                    description: "System will scan provided identifiers against known threat databases.",
+                    status: "current",
+                    icon: "clock"
+                },
+                {
+                    id: "3",
+                    date: "---",
+                    time: "---",
+                    title: "Authority Notified",
+                    description: "Case details will be forwarded to CERT-In upon verification.",
+                    status: "pending",
+                    icon: "clock"
+                }
+            ]
+        };
+    }
 
     // Default happy path case
     return {
@@ -193,12 +240,9 @@ export default async function CaseDetailsPage({ params }: { params: Promise<{ ca
                                     </p>
                                 </div>
 
-                                <div className="pt-2">
-                                    <Button variant="outline" className="w-full text-slate-600">
-                                        <Share2 className="w-4 h-4 mr-2" />
-                                        Share Warning
-                                    </Button>
-                                </div>
+                                <Separator />
+
+                                <SharePanel caseId={caseData.id} />
                             </CardContent>
                         </Card>
 
@@ -302,7 +346,7 @@ export default async function CaseDetailsPage({ params }: { params: Promise<{ ca
 
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

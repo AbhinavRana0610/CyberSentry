@@ -38,11 +38,11 @@ export function Header() {
             </p>
           </div>
         </div>
-        
+
         {/* Right side - Emergency or Helplines (optional in header, but user put it in footer) */}
         <div className="hidden md:block text-right">
-             <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Cyber Fraud Helpline</p>
-             <p className="text-xl font-bold text-blue-900">1930</p>
+          <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Cyber Fraud Helpline</p>
+          <p className="text-xl font-bold text-blue-900">1930</p>
         </div>
       </div>
 
@@ -56,27 +56,27 @@ export function Header() {
               </Link>
             </li>
             <li>
-              <Link href="#" className="block py-3 px-4 hover:bg-slate-200 hover:text-blue-900 border-b-2 border-transparent hover:border-blue-900 transition-colors">
-                Latest Alerts
+              <Link href="/cases" className="block py-3 px-4 hover:bg-slate-200 hover:text-blue-900 border-b-2 border-transparent hover:border-blue-900 transition-colors">
+                Public Cases
               </Link>
             </li>
             <li>
-              <Link href="#" className="block py-3 px-4 hover:bg-slate-200 hover:text-blue-900 border-b-2 border-transparent hover:border-blue-900 transition-colors">
+              <Link href="/report" className="block py-3 px-4 hover:bg-slate-200 hover:text-blue-900 border-b-2 border-transparent hover:border-blue-900 transition-colors">
                 Report Fraud
               </Link>
             </li>
             <li>
-              <Link href="#" className="block py-3 px-4 hover:bg-slate-200 hover:text-blue-900 border-b-2 border-transparent hover:border-blue-900 transition-colors">
-                Scam Types
+              <Link href="/check" className="block py-3 px-4 hover:bg-slate-200 hover:text-blue-900 border-b-2 border-transparent hover:border-blue-900 transition-colors">
+                Scam Check
               </Link>
             </li>
             <li>
-              <Link href="#" className="block py-3 px-4 hover:bg-slate-200 hover:text-blue-900 border-b-2 border-transparent hover:border-blue-900 transition-colors">
+              <Link href="/statistics" className="block py-3 px-4 hover:bg-slate-200 hover:text-blue-900 border-b-2 border-transparent hover:border-blue-900 transition-colors">
                 Statistics
               </Link>
             </li>
             <li>
-              <Link href="#" className="block py-3 px-4 hover:bg-slate-200 hover:text-blue-900 border-b-2 border-transparent hover:border-blue-900 transition-colors">
+              <Link href="/resources" className="block py-3 px-4 hover:bg-slate-200 hover:text-blue-900 border-b-2 border-transparent hover:border-blue-900 transition-colors">
                 Resources
               </Link>
             </li>
