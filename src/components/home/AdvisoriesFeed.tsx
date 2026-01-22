@@ -66,28 +66,30 @@ export function AdvisoriesFeed() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {advisories.map((advisory) => (
-                    <Card key={advisory.id} className="flex flex-col border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                        <CardHeader className="pb-3 px-4 pt-4">
-                            <div className="flex justify-between items-start mb-2">
-                                <Badge className={`${advisory.statusColor} rounded-sm px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold`}>
-                                    {advisory.status}
-                                </Badge>
-                                <span className="text-[10px] text-slate-400 font-mono">{advisory.timestamp}</span>
-                            </div>
-                            <CardTitle className="text-sm font-bold text-slate-800 leading-snug">
-                                {advisory.title}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="px-4 pb-4 flex-grow">
-                            <p className="text-xs text-slate-600 line-clamp-3 mb-3">
-                                {advisory.desc}
-                            </p>
-                            <div className="flex items-center text-xs text-slate-500 font-medium">
-                                <advisory.icon className="w-3 h-3 mr-1.5" />
-                                {advisory.source} • {advisory.category}
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <Link href={`/case/${advisory.id}`} key={advisory.id} className="block h-full">
+                        <Card className="flex flex-col border border-slate-200 shadow-sm hover:shadow-md transition-shadow h-full">
+                            <CardHeader className="pb-3 px-4 pt-4">
+                                <div className="flex justify-between items-start mb-2">
+                                    <Badge className={`${advisory.statusColor} rounded-sm px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold`}>
+                                        {advisory.status}
+                                    </Badge>
+                                    <span className="text-[10px] text-slate-400 font-mono">{advisory.timestamp}</span>
+                                </div>
+                                <CardTitle className="text-sm font-bold text-slate-800 leading-snug">
+                                    {advisory.title}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="px-4 pb-4 flex-grow">
+                                <p className="text-xs text-slate-600 line-clamp-3 mb-3">
+                                    {advisory.desc}
+                                </p>
+                                <div className="flex items-center text-xs text-slate-500 font-medium">
+                                    <advisory.icon className="w-3 h-3 mr-1.5" />
+                                    {advisory.source} • {advisory.category}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </Link>
                 ))}
             </div>
         </section>
