@@ -1,231 +1,189 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
+import React from "react";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
-// URL for World Atlas TopoJSON (standard reliable source)
-const GEO_URL = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
-
-// Basic type for GeoJSON geometry properties
-interface GeoGeometry {
-    rsmKey: string;
-    id?: string;
-    properties: {
-        name?: string;
-        [key: string]: any;
-    };
-}
 
 type ThreatLocation = {
     id: string;
     city: string;
     issue: string;
-    coordinates: [number, number]; // [Longitude, Latitude]
+    top: string;  // Percentage string (e.g. "30%")
+    left: string; // Percentage string (e.g. "40%")
     severity: "critical" | "high" | "elevated" | "emerging";
-    colorHex: string;
+    colorHex: string; // Tailwind color reference for consistency
+    align: "left" | "right"; // Label alignment to avoid overflow
 };
 
-// STRICTLY REAL COORDINATES [Lng, Lat]
+// VISUAL COORDINATES (Percentage based relative to India_Map.png)
 const LOCATIONS: ThreatLocation[] = [
     {
         id: "ncr",
         city: "New Delhi (NCR)",
         issue: "Phishing & Sextortion",
-        coordinates: [77.2090, 28.6139],
+        top: "34%",
+        left: "34.2%",
         severity: "critical",
         colorHex: "#DC2626", // red-600
+        align: "right",
     },
     {
         id: "jaipur",
         city: "Jaipur",
         issue: "OLX Fraud",
-        coordinates: [75.7873, 26.9124],
+        top: "39%",
+        left: "30%",
         severity: "high",
         colorHex: "#EA580C", // orange-600
+        align: "right",
+    
     },
     {
         id: "mumbai",
         city: "Mumbai",
         issue: "Bank Inv. Fraud",
-        coordinates: [72.8777, 19.0760],
+        top: "61.5%",
+        left: "19%",
         severity: "elevated",
         colorHex: "#CA8A04", // yellow-600
+        align: "right",
     },
     {
         id: "bengaluru",
         city: "Bengaluru",
         issue: "Tech Support Fraud",
-        coordinates: [77.5946, 12.9716],
+        top: "80.5%",
+        left: "35%",
         severity: "emerging",
         colorHex: "#9333EA", // purple-600
+        align: "right",
     },
     {
         id: "chennai",
         city: "Chennai",
         issue: "FedEx/Courier Fraud",
-        coordinates: [80.2707, 13.0827],
+        top: "81%",
+        left: "44%",
         severity: "emerging",
         colorHex: "#2563EB", // blue-600
+        align: "left",
     },
     {
         id: "kolkata",
         city: "Kolkata",
         issue: "Loan App Harassment",
-        coordinates: [88.3639, 22.5726],
+        top: "52.5%",
+        left: "70.5%",
         severity: "high",
         colorHex: "#EA580C", // orange-600
+        align: "left",
     },
     {
         id: "jamtara",
-        city: "Jamtara (Jharkhand)",
+        city: "Jamtara",
         issue: "KYC & OTP Fraud",
-        coordinates: [86.8000, 23.9640],
+        top: "48%",
+        left: "65.5%",
         severity: "critical",
         colorHex: "#DC2626", // red-600
+        align: "left",
     },
 ];
 
 export function RegionalThreatMap() {
-    const [tooltipContent, setTooltipContent] = useState<string | null>(null);
-
-    // Optimized projection config for India
-    const projectionConfig = useMemo(() => ({
-        scale: 1000,
-        center: [78.9629, 22.5937] as [number, number]
-    }), []);
-
     return (
-        <Card className="h-full border-t-4 border-t-blue-800 shadow-sm w-full flex flex-col">
+        <Card className="h-full border-t-4 border-t-blue-800 shadow-sm w-full flex flex-col bg-white">
             <CardHeader className="pb-2 flex-none">
                 <CardTitle className="text-lg font-bold text-slate-800 flex justify-between items-center">
                     <span>Regional Live Updates</span>
-                    <Badge variant="outline" className="text-xs font-normal">Live Feed • Real-time Geo-Plotting</Badge>
+                    <Badge variant="outline" className="text-xs font-normal">Live Feed • Static Visualization</Badge>
                 </CardTitle>
-                <CardDescription>Real-time guided map of cyber fraud hotspots across India (Mercator Projection)</CardDescription>
+                <CardDescription>Real-time guided map of cyber fraud hotspots across India</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 min-h-[400px] relative overflow-hidden p-0 flex items-center justify-center bg-slate-50/50">
-                <div className="w-full max-w-[600px] aspect-[4/3] relative">
+            <CardContent className="flex-1 relative overflow-hidden p-4 flex items-center justify-center bg-slate-50/50">
 
-                    <ComposableMap
-                        projection="geoMercator"
-                        projectionConfig={projectionConfig}
-                        width={800}
-                        height={600}
-                        className="w-full h-full"
-                        role="img"
-                        aria-label="Map of India displaying cyber threat locations"
-                        style={{ width: "100%", height: "auto" }}
-                    >
-                        {/* Render India Geography */}
-                        <Geographies geography={GEO_URL}>
-                            {({ geographies }: { geographies: GeoGeometry[] }) =>
-                                geographies.map((geo) => {
-                                    // Filter for India (ID 356 or name India)
-                                    // World Atlas usually uses numeric ID strings
-                                    const isIndia = geo.id === "356" || geo.properties.name === "India";
-                                    if (!isIndia) return null;
+                {/* Map Container */}
+                <div className="relative w-full max-w-[500px]">
 
-                                    return (
-                                        <Geography
-                                            key={geo.rsmKey}
-                                            geography={geo}
-                                            style={{
-                                                default: { fill: "#E2E8F0", stroke: "#94A3B8", strokeWidth: 0.5, outline: "none" },
-                                                hover: { fill: "#CBD5E1", stroke: "#64748B", strokeWidth: 0.75, outline: "none" },
-                                                pressed: { fill: "#E2E8F0", stroke: "#94A3B8", strokeWidth: 0.5, outline: "none" },
-                                            }}
-                                        />
-                                    );
-                                })
-                            }
-                        </Geographies>
+                    {/* BASE MAP SOURCE: Static Image */}
+                    <img
+                        src="/India_Map.png"
+                        alt="Map of India"
+                        className="w-full h-auto object-contain opacity-90"
+                    />
 
-                        {/* Render Markers with Permanent Labels */}
-                        {LOCATIONS.map((loc) => {
-                            // Determine label direction based on longitude
-                            // Longitude > 78 (East India) -> Label flows Left (End)
-                            // Longitude < 78 (West/South India) -> Label flows Right (Start)
-                            // This ensures labels mostly point inwards towards the landmass
-                            const isEast = loc.coordinates[0] > 78;
-                            const textAnchor = isEast ? "end" : "start";
-                            const xOffset = isEast ? -12 : 12;
+                    {/* OVERLAYS: City Markers */}
+                    {LOCATIONS.map((loc) => (
+                        <div
+                            key={loc.id}
+                            className="absolute flex items-center group cursor-default"
+                            style={{
+                                top: loc.top,
+                                left: loc.left,
+                                // Center the marker point itself on the coordinates
+                                transform: 'translate(-50%, -50%)',
+                                zIndex: 10
+                            }}
+                        >
+                            {/* MARKER DOTS */}
+                            <div className="relative flex items-center justify-center w-4 h-4">
+                                {/* Pulse Animation */}
+                                <span
+                                    className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping"
+                                    style={{ backgroundColor: loc.colorHex }}
+                                ></span>
+                                {/* Solid Core */}
+                                <span
+                                    className="relative inline-flex rounded-full h-2.5 w-2.5 border border-white shadow-sm"
+                                    style={{ backgroundColor: loc.colorHex }}
+                                ></span>
+                            </div>
 
-                            return (
-                                <Marker key={loc.id} coordinates={loc.coordinates}>
-                                    <g
-                                        className="cursor-pointer group focus:outline-none"
-                                        role="button"
-                                        aria-label={`${loc.city}: ${loc.issue}`}
-                                        tabIndex={0}
-                                        onMouseEnter={() => setTooltipContent(`${loc.city}: ${loc.issue}`)}
-                                        onMouseLeave={() => setTooltipContent(null)}
-                                        onFocus={() => setTooltipContent(`${loc.city}: ${loc.issue}`)}
-                                        onBlur={() => setTooltipContent(null)}
+                            {/* LABELS */}
+                            <div
+                                className={`absolute whitespace-nowrap z-20 pointer-events-none transition-all duration-300
+                                    ${loc.align === 'left' ? 'right-full mr-2 text-right' : 'left-full ml-2 text-left'}
+                                `}
+                            >
+                                <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded shadow-sm border border-slate-100 flex flex-col">
+                                    <span className="text-[10px] font-extrabold text-slate-900 leading-none">
+                                        {loc.city}
+                                    </span>
+                                    <span
+                                        className="text-[9px] font-semibold uppercase tracking-tight leading-none mt-0.5"
+                                        style={{ color: loc.colorHex }}
                                     >
-                                        {/* Pulse Effect */}
-                                        <circle r={16} fill={loc.colorHex} opacity={0.2} className="animate-ping" />
-
-                                        {/* Core Marker */}
-                                        <circle r={4} fill={loc.colorHex} stroke="#fff" strokeWidth={1.5} />
-
-                                        {/* Permanent Label Group */}
-                                        <g style={{ pointerEvents: 'none' }}>
-                                            {/* Text Halo (Background Stroke) for Readability */}
-                                            <text
-                                                textAnchor={textAnchor}
-                                                x={xOffset}
-                                                y={-2}
-                                                className="font-sans text-[11px] font-extrabold fill-transparent stroke-white stroke-[3px] opacity-90"
-                                                style={{ strokeLinejoin: "round" }}
-                                            >
-                                                {loc.city}
-                                            </text>
-                                            <text
-                                                textAnchor={textAnchor}
-                                                x={xOffset}
-                                                y={9}
-                                                className="font-sans text-[9px] font-bold fill-transparent stroke-white stroke-[3px] opacity-90"
-                                                style={{ strokeLinejoin: "round" }}
-                                            >
-                                                {loc.issue}
-                                            </text>
-
-                                            {/* Foreground Text */}
-                                            <text
-                                                textAnchor={textAnchor}
-                                                x={xOffset}
-                                                y={-2}
-                                                className="font-sans text-[11px] font-extrabold fill-slate-800"
-                                            >
-                                                {loc.city}
-                                            </text>
-                                            <text
-                                                textAnchor={textAnchor}
-                                                x={xOffset}
-                                                y={9}
-                                                className="font-sans text-[9px] font-bold fill-slate-600 uppercase tracking-tight"
-                                            >
-                                                {loc.issue}
-                                            </text>
-                                        </g>
-                                    </g>
-                                </Marker>
-                            );
-                        })}
-                    </ComposableMap>
-
-                    {/* Legend Overlay */}
-                    <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur p-3 rounded-lg shadow-md border border-slate-200 text-xs space-y-2 pointer-events-none">
-                        <div className="font-semibold text-slate-700 mb-1 border-b pb-1">Threat Intensity</div>
-                        <div className="flex items-center"><span className="w-2 h-2 rounded-full bg-red-600 mr-2"></span> Critical</div>
-                        <div className="flex items-center"><span className="w-2 h-2 rounded-full bg-orange-600 mr-2"></span> High</div>
-                        <div className="flex items-center"><span className="w-2 h-2 rounded-full bg-yellow-600 mr-2"></span> Elevated</div>
-                        <div className="flex items-center"><span className="w-2 h-2 rounded-full bg-blue-600 mr-2"></span> Emerging</div>
-                    </div>
+                                        {loc.issue}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
 
                 </div>
+
+                {/* Legend Overlay */}
+                <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur p-2.5 rounded-lg shadow-sm border border-slate-200 text-[10px] space-y-1.5 z-20">
+                    <div className="font-semibold text-slate-700 pb-1 border-b border-slate-100 mb-1">Threat Intensity</div>
+                    <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-red-600"></span>
+                        <span className="text-slate-600">Critical</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-orange-600"></span>
+                        <span className="text-slate-600">High</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-yellow-600"></span>
+                        <span className="text-slate-600">Elevated</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+                        <span className="text-slate-600">Emerging</span>
+                    </div>
+                </div>
+
             </CardContent>
         </Card>
     );

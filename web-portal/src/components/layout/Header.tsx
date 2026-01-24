@@ -80,6 +80,11 @@ export function Header() {
                 Resources
               </Link>
             </li>
+            <li>
+              <Link href="/publish-news" className="block py-3 px-4 hover:bg-slate-200 hover:text-blue-900 border-b-2 border-transparent hover:border-blue-900 transition-colors">
+                Publish News Article
+              </Link>
+            </li>
           </ul>
         </div>
       </nav>
